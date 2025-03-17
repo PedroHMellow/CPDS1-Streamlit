@@ -39,7 +39,7 @@ with open(css_file) as f:
 # Nav
 with st.sidebar:
     selected = option_menu("Main Menu", ["Home", 'Skills', 'Análise de Dados'], 
-        icons=['house', 'gear'], menu_icon="cast", default_index=1)
+        icons=['house', 'gear'], menu_icon="cast", default_index=0)
 
 # Home
 if selected == "Home":
