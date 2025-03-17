@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import norm, poisson
-
+from streamlit_option_menu import option_menu
 
 # Configurações do caminho:
 current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
@@ -31,12 +31,18 @@ RedesS = {
     "🔗Github": "https://github.com/PedroHMellow"
 }
 
-# Nav
 st.set_page_config(page_title=TPagina)
-menu = st.sidebar.radio("Navegação", ["Home", "Skills", "Análise de Dados"])
+
+with open(css_file) as f:
+    st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
+
+# Nav
+with st.sidebar:
+    selected = option_menu("Main Menu", ["Home", 'Skills', 'Análise de Dados'], 
+        icons=['house', 'gear'], menu_icon="cast", default_index=1)
 
 # Home
-if menu == "Home":
+if selected == "Home":
     with open(css_file) as f:
         st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
         with open(resume_file, "rb") as pdf_file:
@@ -69,32 +75,61 @@ if menu == "Home":
         - 🎓 FIAP | Engenharia de Software (Previsão de conclusão: Julho de 2027)
         """)
         st.subheader("Experiência:")
+        st.markdown("#### - 👨🏻‍💻 Programador | Front End para Hospital HC")
         st.write("""
-        - 👨🏻‍💻 Programador | Front End para Hospital HC
-            -   Revitalização do site do Hospital, com foco na experiência do usuário(UX).
-            -   Garantia de acessibilidade para públicos de diferentes faixas etárias.
-            -   Priorização da empatia no design, considerando o público infantil.
-            -   Utilização de HTML, Tailwind e JavaScript para uma interface intuitiva e responsiva.
+            -   * Revitalização do site do Hospital, com foco na experiência do usuário(UX).
+            -   * Garantia de acessibilidade para públicos de diferentes faixas etárias.
+            -   * Priorização da empatia no design, considerando o público infantil.
+            -   * Utilização de HTML, Tailwind e JavaScript para uma interface intuitiva e responsiva.
         """)
-        st.write("---")
+        st.markdown("#### - 👨🏻‍💻 Programador para Rede Ancora")
         st.write("""
-        - 👨🏻‍💻 Programador para Rede Ancora
-            -   Projeto em andamento com foco na fidelização de clientes da Rede Âncora.
-            -   Desenvolvimento de um website para compra de peças com ambiente 3D interativo.
-            -   O ambiente 3D auxilia na modelagem, criação e manutenção de carros.
-            -   Tecnologias utilizadas: Maya, Java, HTML, CSS e Python.
+            -   * Projeto em andamento com foco na fidelização de clientes da Rede Âncora.
+            -   * Desenvolvimento de um website para compra de peças com ambiente 3D interativo.
+            -   * O ambiente 3D auxilia na modelagem, criação e manutenção de carros.
+            -   * Tecnologias utilizadas: Maya, Java, HTML, CSS e Python.
         """)
 
 # Skills
-elif menu == "Skills":
+elif selected == "Skills":
     with open(css_file) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
         st.subheader("Skills")
-        st.write("""
-        - ⭐ Linguagens de Programação: Python, HTML, CSS, React e Tailwind 
-        - ⭐ Soft Skills: Storytelling
-        - ⭐ Extras: Photoshop 
-        """)
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.markdown("### 🖥️ Linguagens de Programação")
+            skills_prog = {
+                "HTML": 90,
+                "CSS": 85,
+                "Tailwind": 80,
+                "React": 75, 
+                "Python": 70
+            }
+            for skill, nivel in skills_prog.items():
+                st.write(f"**{skill}**")
+                st.progress(nivel / 100)
+
+        with col2:
+            st.markdown("### 🎭 Soft Skills")
+            skills_soft = {
+                "Storytelling": 80,
+                "Trabalho em Equipe": 85,
+                "Resolução de Problemas": 75
+            }
+            for skill, nivel in skills_soft.items():
+                st.write(f"**{skill}**")
+                st.progress(nivel / 100)
+
+        with col3:
+            st.markdown("### 🎨 Extras")
+            skills_extra = {
+                "Photoshop": 60,
+                "Modelagem 3D": 70
+            }
+            for skill, nivel in skills_extra.items():
+                st.write(f"**{skill}**")
+                st.progress(nivel / 100)
 
         categories = ["Linguagens de Programação", "Soft Skills", "Extra"]
         valores = [8, 7, 6]
@@ -113,7 +148,7 @@ elif menu == "Skills":
         st.plotly_chart(fig)
 
 # Análise de Dados
-elif menu == "Análise de Dados":
+elif selected == "Análise de Dados":
     with open(css_file) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
@@ -134,8 +169,8 @@ elif menu == "Análise de Dados":
                     "SFZ1KT": "Sales Volume (Trend)",
                     "SFZ5KA": "Closing Stocks Volume"
                 })
-                df = df.dropna(how='all')  # Remover linhas completamente vazias
-                df = df.dropna(axis=1, how='all')  # Remover colunas completamente vazias
+                df = df.dropna(how='all')  
+                df = df.dropna(axis=1, how='all')  
                 return df
             except Exception as e:
                 st.error(f"Erro ao carregar os dados: {e}")
@@ -220,7 +255,7 @@ elif menu == "Análise de Dados":
         st.subheader("Distribuição de Poisson")
         st.write("A distribuição de Poisson é aplicada para modelar a ocorrência de eventos em um intervalo de tempo fixo.")
         
-        lambda_poisson = sales_data.mean() / 1000  # Normalizando para valores razoáveis
+        lambda_poisson = sales_data.mean() / 1000  
         x_poisson = np.arange(0, max(sales_data)//1000)
         y_poisson = poisson.pmf(x_poisson, lambda_poisson)
         
